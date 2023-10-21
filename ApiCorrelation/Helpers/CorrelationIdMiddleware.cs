@@ -4,8 +4,14 @@ namespace ApiCorrelation.Helpers;
 
 public class CorrelationIdMiddleware
 {
-    private readonly RequestDelegate _next;
     private const string _correlationIdHeader = "X-Correlation-Id";
+
+    private readonly RequestDelegate _next;
+
+    public CorrelationIdMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
 
     public async Task Invoke(HttpContext context, ICorrelationIdGenerator correlationIdGenerator)
     {
@@ -24,7 +30,7 @@ public class CorrelationIdMiddleware
             return Task.CompletedTask;
         });
     }
-
+     
     private static string GetCorrelationTrace(HttpContext context, ICorrelationIdGenerator correlationIdGenerator)
     {
         if (context.Request.Headers.TryGetValue(_correlationIdHeader, out var correlationId))
